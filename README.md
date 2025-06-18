@@ -1,63 +1,253 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=19753656&assignment_repo_type=AssignmentRepo)
-# Express.js RESTful API Assignment
+# Express.js RESTful API
 
-This assignment focuses on building a RESTful API using Express.js, implementing proper routing, middleware, and error handling.
+A RESTful API built with Express.js that provides endpoints for managing products. The API includes features like authentication, request validation, filtering, pagination, and search functionality.
 
-## Assignment Overview
-
-You will:
-1. Set up an Express.js server
-2. Create RESTful API routes for a product resource
-3. Implement custom middleware for logging, authentication, and validation
-4. Add comprehensive error handling
-5. Develop advanced features like filtering, pagination, and search
-
-## Getting Started
-
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Install dependencies:
-   ```
-   npm install
-   ```
-4. Run the server:
-   ```
-   npm start
-   ```
-
-## Files Included
-
-- `Week2-Assignment.md`: Detailed assignment instructions
-- `server.js`: Starter Express.js server file
-- `.env.example`: Example environment variables file
-
-## Requirements
+## Prerequisites
 
 - Node.js (v18 or higher)
 - npm or yarn
 - Postman, Insomnia, or curl for API testing
 
-## API Endpoints
+## Installation
 
-The API will have the following endpoints:
+1. Clone the repository:
+```bash
+git clone <your-repository-url>
+cd <repository-name>
+```
 
-- `GET /api/products`: Get all products
-- `GET /api/products/:id`: Get a specific product
-- `POST /api/products`: Create a new product
-- `PUT /api/products/:id`: Update a product
-- `DELETE /api/products/:id`: Delete a product
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Submission
+3. Create a `.env` file based on `.env.example`:
+```bash
+cp .env.example .env
+```
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+4. Start the server:
+```bash
+npm start
+```
 
-1. Complete all the required API endpoints
-2. Implement the middleware and error handling
-3. Document your API in the README.md
-4. Include examples of requests and responses
+The server will start running on `http://localhost:3000` (or the port specified in your .env file).
 
-## Resources
+## API Documentation
 
-- [Express.js Documentation](https://expressjs.com/)
-- [RESTful API Design Best Practices](https://restfulapi.net/)
-- [HTTP Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) 
+### Authentication
+
+All API endpoints require authentication using an API key. Include the API key in the request headers:
+
+```
+x-api-key: demo-api-key
+```
+
+### Endpoints
+
+#### 1. Get All Products
+- **URL**: `/api/products`
+- **Method**: `GET`
+- **Query Parameters**:
+  - `category` (optional): Filter by category
+  - `inStock` (optional): Filter by stock status (true/false)
+  - `search` (optional): Search in name and description
+  - `page` (optional): Page number (default: 1)
+  - `limit` (optional): Items per page (default: 10)
+
+**Example Request**:
+```bash
+curl "http://localhost:3000/api/products?category=electronics&inStock=true&page=1&limit=10" \
+  -H "x-api-key: demo-api-key"
+```
+
+**Example Response**:
+```json
+{
+  "total": 2,
+  "page": 1,
+  "limit": 10,
+  "products": [
+    {
+      "id": "1",
+      "name": "Laptop",
+      "description": "High-performance laptop with 16GB RAM",
+      "price": 1200,
+      "category": "electronics",
+      "inStock": true
+    },
+    {
+      "id": "2",
+      "name": "Smartphone",
+      "description": "Latest model with 128GB storage",
+      "price": 800,
+      "category": "electronics",
+      "inStock": true
+    }
+  ]
+}
+```
+
+#### 2. Get Product by ID
+- **URL**: `/api/products/:id`
+- **Method**: `GET`
+
+**Example Request**:
+```bash
+curl http://localhost:3000/api/products/1 \
+  -H "x-api-key: demo-api-key"
+```
+
+**Example Response**:
+```json
+{
+  "id": "1",
+  "name": "Laptop",
+  "description": "High-performance laptop with 16GB RAM",
+  "price": 1200,
+  "category": "electronics",
+  "inStock": true
+}
+```
+
+#### 3. Create Product
+- **URL**: `/api/products`
+- **Method**: `POST`
+- **Required Fields**:
+  - `name` (string)
+  - `price` (number)
+  - `category` (string)
+- **Optional Fields**:
+  - `description` (string)
+  - `inStock` (boolean)
+
+**Example Request**:
+```bash
+curl -X POST http://localhost:3000/api/products \
+  -H "x-api-key: demo-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "New Product",
+    "price": 99.99,
+    "category": "electronics",
+    "description": "A new product",
+    "inStock": true
+  }'
+```
+
+**Example Response**:
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "New Product",
+  "price": 99.99,
+  "category": "electronics",
+  "description": "A new product",
+  "inStock": true
+}
+```
+
+#### 4. Update Product
+- **URL**: `/api/products/:id`
+- **Method**: `PUT`
+- **Required Fields** (at least one):
+  - `name` (string)
+  - `price` (number)
+  - `category` (string)
+
+**Example Request**:
+```bash
+curl -X PUT http://localhost:3000/api/products/1 \
+  -H "x-api-key: demo-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Product",
+    "price": 149.99,
+    "category": "electronics"
+  }'
+```
+
+**Example Response**:
+```json
+{
+  "id": "1",
+  "name": "Updated Product",
+  "description": "High-performance laptop with 16GB RAM",
+  "price": 149.99,
+  "category": "electronics",
+  "inStock": true
+}
+```
+
+#### 5. Delete Product
+- **URL**: `/api/products/:id`
+- **Method**: `DELETE`
+
+**Example Request**:
+```bash
+curl -X DELETE http://localhost:3000/api/products/1 \
+  -H "x-api-key: demo-api-key"
+```
+
+**Example Response**:
+```json
+{
+  "id": "1",
+  "name": "Laptop",
+  "description": "High-performance laptop with 16GB RAM",
+  "price": 1200,
+  "category": "electronics",
+  "inStock": true
+}
+```
+
+### Error Responses
+
+The API uses standard HTTP status codes and returns error messages in JSON format:
+
+```json
+{
+  "error": "Error message here"
+}
+```
+
+Common error codes:
+- `400`: Bad Request (validation errors)
+- `401`: Unauthorized (invalid API key)
+- `404`: Not Found
+- `500`: Internal Server Error
+
+## Project Structure
+
+```
+.
+├── server.js          # Main application file
+├── .env.example       # Example environment variables
+├── package.json       # Project dependencies
+└── README.md         # This file
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables (see `.env.example` for reference):
+
+```
+PORT=3000
+API_KEY=demo-api-key
+```
+
+## Error Handling
+
+The API includes comprehensive error handling:
+- Input validation for all requests
+- Authentication checks
+- Resource existence verification
+- Global error handler for unexpected errors
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request 
